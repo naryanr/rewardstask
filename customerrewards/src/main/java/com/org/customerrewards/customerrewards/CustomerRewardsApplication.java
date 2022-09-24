@@ -10,9 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 @ComponentScan(basePackages = { "com.org.customerrewards.customerrewards.entity" })
-@EnableTransactionManagement
-@EntityScan(basePackages = "com.org.customerrewards.customerrewards.entity")
-@EnableJpaRepositories(basePackages = "com.org.customerrewards.customerrewards.repository")
 public class CustomerRewardsApplication {
 
 	public static void main(String[] args) {
