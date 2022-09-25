@@ -7,6 +7,6 @@ public interface CustomerRewardsService {
 
     public Customer findByCustomerId(Long customerId);
 
-    public CustomerRewards getCustomerRewards(long customerId);
+    public CustomerRewards getCustomerRewards(Long customerId);
 
 }

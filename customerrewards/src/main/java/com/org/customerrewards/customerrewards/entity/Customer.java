@@ -7,14 +7,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
 @Table(name = "CUSTOMER")
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column(name = "CUSTOMER_ID")
+    private Long customerId;
 
     @Column(name = "CUSTOMER_NAME")
     private String customerName;

@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import com.org.customerrewards.customerrewards.Constants.CustomerRewardsConstant
 @Service
 public class CustomerRewardsServiceImpl implements CustomerRewardsService {
 
+    Logger logger = LoggerFactory.getLogger(CustomerRewardsServiceImpl.class);
+
     @Autowired
     TransactionRepository transactionRepository;
 
@@ -27,37 +31,37 @@ public class CustomerRewardsServiceImpl implements CustomerRewardsService {
 
     @Override
     public Customer findByCustomerId(Long customerId) {
-        return customerRepository.findByCustomerId(customerId);
+        Customer customer = customerRepository.findByCustomerId(customerId);
+        return customer;
     }
 
     @Override
-    public CustomerRewards getCustomerRewards(long customerId) {
+    public CustomerRewards getCustomerRewards(Long customerId) {
         Timestamp lastMonthTimestamp = getMonthTimeStamp(CustomerRewardsConstants.daysInMonth);
         Timestamp lastSecondMonthTimestamp = getMonthTimeStamp(CustomerRewardsConstants.daysInMonth * 2);
         Timestamp lastThirdMonthTimestamp = getMonthTimeStamp(CustomerRewardsConstants.daysInMonth * 3);
 
         List<Transaction> lastMonthTransactionList = transactionRepository
-                .findAllTransactionsByCustomerIdTimeStamp(customerId, lastMonthTimestamp,
+                .findAllByCustomerIdAndTransactionDateBetween(customerId, lastMonthTimestamp,
                         Timestamp.from(Instant.now()));
 
         List<Transaction> lastSecondMonthTransactionList = transactionRepository
-                .findAllTransactionsByCustomerIdTimeStamp(customerId, lastSecondMonthTimestamp, lastMonthTimestamp);
+                .findAllByCustomerIdAndTransactionDateBetween(customerId, lastSecondMonthTimestamp,
+                        lastMonthTimestamp);
 
         List<Transaction> lastThirdMonthTransactionList = transactionRepository
-                .findAllTransactionsByCustomerIdTimeStamp(customerId, lastThirdMonthTimestamp,
+                .findAllByCustomerIdAndTransactionDateBetween(customerId, lastThirdMonthTimestamp,
                         lastSecondMonthTimestamp);
 
         Long lastMonthRewards = getRewardsPerMonth(lastMonthTransactionList);
         Long lastSecondMonthRewards = getRewardsPerMonth(lastSecondMonthTransactionList);
         Long lastThirdMonthRewards = getRewardsPerMonth(lastThirdMonthTransactionList);
-
         CustomerRewards customerRewards = new CustomerRewards();
         customerRewards.setCustomerId(customerId);
         customerRewards.setLastMonthRewards(lastMonthRewards);
         customerRewards.setLastSecondMonthRewards(lastSecondMonthRewards);
         customerRewards.setLastThirdMonthRewards(lastThirdMonthRewards);
         customerRewards.setTotalRewards(lastMonthRewards + lastSecondMonthRewards + lastThirdMonthRewards);
-
         return customerRewards;
     }
 
